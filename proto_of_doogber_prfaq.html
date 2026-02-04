@@ -1,0 +1,2733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Doogber - Rides for Dogs</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #FF6B35;
+  --primary-dark: #E55A2B;
+  --secondary: #4A90A4;
+  --success: #34C759;
+  --warning: #FF9500;
+  --danger: #FF3B30;
+  --bg: #F5F5F7;
+  --card: #FFFFFF;
+  --text: #1D1D1F;
+  --text-secondary: #86868B;
+  --border: #E5E5EA;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #1a1a1a;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.phone-frame {
+  width: 375px;
+  height: 812px;
+  background: var(--bg);
+  border-radius: 40px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+}
+
+.notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 30px;
+  background: #000;
+  border-radius: 0 0 20px 20px;
+  z-index: 100;
+}
+
+.status-bar {
+  height: 44px;
+  background: var(--card);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 20px 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.app-container {
+  height: calc(100% - 44px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mode-toggle {
+  display: flex;
+  background: var(--card);
+  padding: 8px;
+  gap: 4px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-secondary);
+}
+
+.mode-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
+.screen {
+  flex: 1;
+  overflow-y: auto;
+  display: none;
+  flex-direction: column;
+}
+
+.screen.active {
+  display: flex;
+}
+
+.header {
+  background: var(--card);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header h1 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.back-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--bg);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.logo-section {
+  text-align: center;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+}
+
+.logo-section h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.logo-section p {
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.dog-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.card-title {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 16px;
+  background: var(--bg);
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.preset-btn {
+  padding: 12px 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.preset-btn:hover, .preset-btn.selected {
+  border-color: var(--primary);
+  background: rgba(255,107,53,0.1);
+}
+
+.preset-btn .icon {
+  font-size: 20px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.dog-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dog-profile.selected {
+  border-color: var(--primary);
+  background: rgba(255,107,53,0.05);
+}
+
+.dog-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.dog-info h3 {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.dog-info p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.size-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.size-small { background: #E8F5E9; color: #2E7D32; }
+.size-medium { background: #FFF3E0; color: #E65100; }
+.size-large { background: #FFEBEE; color: #C62828; }
+
+.time-options {
+  display: flex;
+  gap: 8px;
+}
+
+.time-btn {
+  flex: 1;
+  padding: 14px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.time-btn.selected {
+  border-color: var(--primary);
+  background: rgba(255,107,53,0.05);
+}
+
+.time-btn .label {
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+}
+
+.time-btn .sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.price-breakdown {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.price-row.total {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-primary:disabled {
+  background: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.bottom-bar {
+  padding: 16px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+}
+
+.demand-banner {
+  background: linear-gradient(90deg, #FF9500, #FF6B35);
+  color: white;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.demand-banner.hidden {
+  display: none;
+}
+
+.matching-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.trip-status {
+  text-align: center;
+  padding: 20px;
+}
+
+.status-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.status-text {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.status-sub {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.driver-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--card);
+  border-radius: 16px;
+  margin: 16px 0;
+}
+
+.driver-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+}
+
+.driver-info h3 {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.driver-info p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.badges {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.badge-verified { background: #E8F5E9; color: #2E7D32; }
+.badge-insured { background: #E3F2FD; color: #1565C0; }
+.badge-certified { background: #FFF3E0; color: #E65100; }
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.star { color: #FFD700; }
+
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: var(--bg);
+}
+
+.action-btn .icon {
+  font-size: 20px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.action-btn .label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.emergency-btn {
+  background: #FFEBEE;
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.trust-info {
+  background: #E8F5E9;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 13px;
+  color: #2E7D32;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.driver-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: var(--card);
+}
+
+.toggle-switch {
+  width: 56px;
+  height: 32px;
+  background: var(--border);
+  border-radius: 16px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.toggle-switch.active {
+  background: var(--success);
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-switch.active::after {
+  transform: translateX(24px);
+}
+
+.request-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.request-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.request-dog-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.request-info h3 {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+.request-info p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.request-details {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.detail-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-icon {
+  width: 20px;
+  text-align: center;
+}
+
+.handling-notes {
+  background: #FFF3E0;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.handling-notes strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #E65100;
+}
+
+.earnings-badge {
+  background: var(--success);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.request-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.request-actions .btn {
+  flex: 1;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--card);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.checklist-item.completed {
+  background: #E8F5E9;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.checklist-item.completed .checkbox {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.checklist-text {
+  flex: 1;
+  font-size: 15px;
+}
+
+.photo-upload {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+}
+
+.photo-upload:hover {
+  border-color: var(--primary);
+  background: rgba(255,107,53,0.05);
+}
+
+.photo-upload.has-photo {
+  border-style: solid;
+  border-color: var(--success);
+  background: #E8F5E9;
+}
+
+.photo-upload .icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: flex-end;
+  z-index: 50;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--bg);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.help-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.help-item:last-child {
+  border-bottom: none;
+}
+
+.help-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--bg);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.help-text {
+  flex: 1;
+}
+
+.help-text h4 {
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.help-text p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.receipt {
+  text-align: center;
+  padding: 20px;
+}
+
+.receipt-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.receipt h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.receipt-amount {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 20px 0;
+}
+
+.receipt-details {
+  text-align: left;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px 0;
+}
+
+.admin-panel {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--card);
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+}
+
+.admin-panel.active {
+  display: flex;
+}
+
+.admin-header {
+  padding: 16px 20px;
+  background: #1D1D1F;
+  color: white;
+}
+
+.admin-header h2 {
+  font-size: 18px;
+}
+
+.admin-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.admin-section {
+  margin-bottom: 24px;
+}
+
+.admin-section h3 {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.admin-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.admin-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--card);
+}
+
+.ride-log {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.ride-log .time {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.incident-log {
+  background: #FFEBEE;
+  border-left: 3px solid var(--danger);
+}
+
+.scheduled-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+textarea.input-field {
+  resize: none;
+  min-height: 80px;
+}
+
+    /* Analytics Section Styles */
+    .analytics-section { background: #1a1a2e; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+    .analytics-section h3 { color: #00d4ff; margin-bottom: 15px; }
+    .analytics-controls { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
+    .analytics-controls select { background: #16213e; color: white; border: 1px solid #00d4ff; padding: 8px 12px; border-radius: 4px; }
+    .copy-btn { background: #00d4ff; color: #0f0f23; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .copy-btn:hover { background: #00a8cc; }
+    .kpi-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+    .kpi-card { background: #16213e; padding: 12px; border-radius: 6px; text-align: center; }
+    .kpi-card .value { font-size: 24px; font-weight: bold; color: #00d4ff; }
+    .kpi-card .label { font-size: 11px; color: #888; margin-top: 4px; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+    .chart-container { background: #16213e; padding: 12px; border-radius: 6px; }
+    .chart-container h4 { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+    .funnel-table { background: #16213e; padding: 12px; border-radius: 6px; }
+    .funnel-table h4 { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+    .funnel-table table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .funnel-table th, .funnel-table td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #2a2a4a; }
+    .funnel-table th { color: #00d4ff; }
+    .funnel-table .conversion { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="notch"></div>
+  <div class="status-bar">
+    <span>4:04 PM</span>
+    <span>🐕 Doogber</span>
+    <span>100%🔋</span>
+  </div>
+  
+  <div class="app-container">
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="owner">🐕 Pet Owner</button>
+      <button class="mode-btn" data-mode="driver">🚗 Driver/Handler</button>
+    </div>
+
+    <div id="demand-banner" class="demand-banner hidden">
+      ⚡ High demand in your area — ETAs may be longer
+    </div>
+
+    <div id="owner-home" class="screen active">
+      <div class="logo-section">
+        <div class="dog-icon">🐕</div>
+        <h1>Doober</h1>
+        <p>Safe, reliable rides for your furry family</p>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Where's your pup going?</div>
+          <div class="input-group">
+            <label>Pickup Location</label>
+            <input type="text" class="input-field" id="pickup-input" placeholder="Enter pickup address" value="123 Main Street, Seattle">
+          </div>
+          <div class="input-group">
+            <label>Dropoff Location</label>
+            <input type="text" class="input-field" id="dropoff-input" placeholder="Enter destination">
+          </div>
+          <div class="card-title" style="margin-top:16px">Quick Destinations</div>
+          <div class="preset-grid" id="preset-grid"></div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <button class="btn btn-primary" id="continue-to-dog">Continue</button>
+      </div>
+    </div>
+
+    <div id="owner-dog-select" class="screen">
+      <div class="header">
+        <button class="back-btn" data-back="owner-home">←</button>
+        <h1>Select Your Dog</h1>
+      </div>
+      <div class="content">
+        <div id="dog-profiles"></div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-title">Special Instructions</div>
+          <textarea class="input-field" id="special-instructions" placeholder="e.g., Gets anxious in cars, needs window cracked, loves treats..."></textarea>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <button class="btn btn-primary" id="continue-to-time">Continue</button>
+      </div>
+    </div>
+
+    <div id="owner-time-select" class="screen">
+      <div class="header">
+        <button class="back-btn" data-back="owner-dog-select">←</button>
+        <h1>When?</h1>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Pickup Time</div>
+          <div class="time-options">
+            <div class="time-btn selected" data-time="asap">
+              <span class="label">ASAP</span>
+              <span class="sub" id="asap-eta">~5 min</span>
+            </div>
+            <div class="time-btn" data-time="scheduled" id="scheduled-btn">
+              <span class="label">Schedule</span>
+              <span class="sub">Pick a time</span>
+            </div>
+          </div>
+          <div id="schedule-picker" style="display:none;margin-top:16px">
+            <input type="datetime-local" class="input-field" id="schedule-time">
+          </div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <button class="btn btn-primary" id="continue-to-price">See Price Estimate</button>
+      </div>
+    </div>
+
+    <div id="owner-price" class="screen">
+      <div class="header">
+        <button class="back-btn" data-back="owner-time-select">←</button>
+        <h1>Price Estimate</h1>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Trip Summary</div>
+          <div id="trip-summary"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Transparent Pricing</div>
+          <div class="price-breakdown" id="price-breakdown"></div>
+        </div>
+        <div class="trust-info">
+          🛡️ All rides include $1M liability insurance and real-time GPS tracking
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div style="font-size:12px;color:var(--text-secondary)">
+            <strong>Cancellation Policy:</strong> Free cancellation up to 5 minutes after booking. After that, a $5 fee applies.
+          </div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <button class="btn btn-primary" id="confirm-request">Confirm Request</button>
+      </div>
+    </div>
+
+    <div id="owner-matching" class="screen">
+      <div class="matching-screen">
+        <div class="spinner"></div>
+        <h2>Finding the perfect handler...</h2>
+        <p style="color:var(--text-secondary);margin-top:8px">Matching you with a certified Doogber driver</p>
+      </div>
+    </div>
+
+    <div id="owner-trip" class="screen">
+      <div class="header">
+        <h1>Trip in Progress</h1>
+        <button class="action-btn emergency-btn" style="margin-left:auto;flex:0;padding:8px 12px" id="emergency-btn">
+          🚨 SOS
+        </button>
+      </div>
+      <div class="content">
+        <div class="trip-status" id="trip-status">
+          <div class="status-icon">🚗</div>
+          <div class="status-text">Driver Assigned</div>
+          <div class="status-sub">Sarah is on her way</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="trip-progress" style="width:10%"></div>
+        </div>
+        <div class="driver-card" id="assigned-driver"></div>
+        <div class="action-buttons">
+          <button class="action-btn" id="call-driver">
+            <span class="icon">📞</span>
+            <span class="label">Call</span>
+          </button>
+          <button class="action-btn" id="text-driver">
+            <span class="icon">💬</span>
+            <span class="label">Message</span>
+          </button>
+          <button class="action-btn" id="help-btn">
+            <span class="icon">❓</span>
+            <span class="label">Help</span>
+          </button>
+        </div>
+        <div class="trust-info" style="margin-top:16px">
+          🔒 Your phone number is masked for privacy
+        </div>
+      </div>
+    </div>
+
+    <div id="owner-receipt" class="screen">
+      <div class="content">
+        <div class="receipt">
+          <div class="receipt-icon">✅</div>
+          <h2>Trip Complete!</h2>
+          <p style="color:var(--text-secondary)">Your pup has arrived safely</p>
+          <div class="receipt-amount" id="receipt-amount">$18.50</div>
+          <div class="receipt-details" id="receipt-details"></div>
+          <div style="display:flex;gap:8px;margin-top:20px">
+            <button class="btn btn-secondary" style="flex:1" id="rate-trip">⭐ Rate Trip</button>
+            <button class="btn btn-primary" style="flex:1" id="new-ride">Book Again</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="driver-home" class="screen">
+      <div class="driver-toggle">
+        <div>
+          <div style="font-weight:600">Go Online</div>
+          <div style="font-size:13px;color:var(--text-secondary)" id="driver-status-text">You're offline</div>
+        </div>
+        <div class="toggle-switch" id="driver-toggle"></div>
+      </div>
+      <div class="content" id="driver-content">
+        <div class="card" style="text-align:center;padding:40px">
+          <div style="font-size:48px;margin-bottom:16px">🐕</div>
+          <h3>Ready to drive?</h3>
+          <p style="color:var(--text-secondary);margin-top:8px">Go online to start receiving ride requests</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Today's Earnings</div>
+          <div style="font-size:28px;font-weight:700">$0.00</div>
+          <div style="font-size:13px;color:var(--text-secondary)">0 trips completed</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="driver-request" class="screen">
+      <div class="content" style="display:flex;align-items:center;justify-content:center">
+        <div class="request-card" id="request-card"></div>
+      </div>
+    </div>
+
+    <div id="driver-pickup" class="screen">
+      <div class="header">
+        <h1>Pickup Checklist</h1>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Before Starting Trip</div>
+          <div id="pickup-checklist"></div>
+        </div>
+        <div class="photo-upload" id="pickup-photo">
+          <div class="icon">📷</div>
+          <div>Tap to take pickup photo</div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <button class="btn btn-primary" id="start-trip-btn" disabled>Start Trip</button>
+      </div>
+    </div>
+
+    <div id="driver-intransit" class="screen">
+      <div class="header">
+        <h1>Trip in Progress</h1>
+        <button class="action-btn emergency-btn" style="margin-left:auto;flex:0;padding:8px 12px" id="driver-emergency-btn">
+          🚨 SOS
+        </button>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="request-dog-avatar" id="intransit-dog-avatar">🐕</div>
+            <div>
+              <div style="font-weight:600" id="intransit-dog-name">Buddy</div>
+              <div style="font-size:13px;color:var(--text-secondary)" id="intransit-destination">→ Happy Paws Vet</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Navigation</div>
+          <div style="background:var(--bg);border-radius:12px;padding:20px;text-align:center">
+            <div style="font-size:24px;margin-bottom:8px">🗺️</div>
+            <div style="font-weight:600" id="nav-eta">ETA: 12 min</div>
+            <div style="font-size:13px;color:var(--text-secondary)" id="nav-distance">3.2 miles remaining</div>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="action-btn" id="driver-call-owner">
+            <span class="icon">📞</span>
+            <span class="label">Call Owner</span>
+          </button>
+          <button class="action-btn" id="driver-text-owner">
+            <span class="icon">💬</span>
+            <span class="label">Message</span>
+          </button>
+          <button class="action-btn" id="report-issue-btn">
+            <span class="icon">⚠️</span>
+            <span class="label">Report Issue</span>
+          </button>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <button class="btn btn-success" id="arrive-btn">Arrived at Destination</button>
+      </div>
+    </div>
+
+    <div id="driver-dropoff" class="screen">
+      <div class="header">
+        <h1>Dropoff Checklist</h1>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Complete Dropoff</div>
+          <div id="dropoff-checklist"></div>
+        </div>
+        <div class="photo-upload" id="dropoff-photo">
+          <div class="icon">📷</div>
+          <div>Tap to take dropoff photo</div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <button class="btn btn-success" id="complete-trip-btn" disabled>Complete Trip</button>
+      </div>
+    </div>
+
+    <div id="driver-summary" class="screen">
+      <div class="content">
+        <div class="receipt">
+          <div class="receipt-icon">💰</div>
+          <h2>Trip Complete!</h2>
+          <p style="color:var(--text-secondary)">Great job delivering safely</p>
+          <div class="receipt-amount" id="driver-earnings">+$14.80</div>
+          <div class="receipt-details" id="driver-summary-details"></div>
+          <button class="btn btn-primary" id="driver-done" style="margin-top:20px">Back to Home</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="help-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Help & Support</h2>
+          <button class="modal-close" id="close-help">×</button>
+        </div>
+        <div class="modal-content">
+          <div class="help-item">
+            <div class="help-icon">🚗</div>
+            <div class="help-text">
+              <h4>Driver hasn't arrived</h4>
+              <p>Get help if your driver is late</p>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon">🐕</div>
+            <div class="help-text">
+              <h4>Concerned about my dog</h4>
+              <p>Report safety concerns</p>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon">💳</div>
+            <div class="help-text">
+              <h4>Pricing or payment issue</h4>
+              <p>Questions about charges</p>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon">❌</div>
+            <div class="help-text">
+              <h4>Cancel this ride</h4>
+              <p>Free within 5 minutes</p>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon">💬</div>
+            <div class="help-text">
+              <h4>Chat with support</h4>
+              <p>24/7 live assistance</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="emergency-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>🚨 Emergency</h2>
+          <button class="modal-close" id="close-emergency">×</button>
+        </div>
+        <div class="modal-content">
+          <div class="help-item" style="background:#FFEBEE;border-radius:12px;padding:16px;margin-bottom:16px">
+            <div class="help-icon" style="background:#FFCDD2">🚑</div>
+            <div class="help-text">
+              <h4 style="color:var(--danger)">Call 911</h4>
+              <p>For immediate emergencies</p>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon">📞</div>
+            <div class="help-text">
+              <h4>Doogber Safety Line</h4>
+              <p>24/7 emergency support team</p>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon">📍</div>
+            <div class="help-text">
+              <h4>Share trip with contact</h4>
+              <p>Send live location to someone you trust</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="incident-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Report an Issue</h2>
+          <button class="modal-close" id="close-incident">×</button>
+        </div>
+        <div class="modal-content">
+          <div class="input-group">
+            <label>What happened?</label>
+            <select class="input-field" id="incident-type">
+              <option value="">Select issue type</option>
+              <option value="behavior">Dog behavior concern</option>
+              <option value="safety">Safety issue</option>
+              <option value="route">Route problem</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Details</label>
+            <textarea class="input-field" id="incident-details" placeholder="Describe what happened..."></textarea>
+          </div>
+          <button class="btn btn-primary" id="submit-incident">Submit Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-panel" id="admin-panel">
+    <div class="admin-header">
+      <h2>🔧 Admin/Operations Panel</h2>
+      <div style="font-size:12px;opacity:0.7">Press 'A' to close</div>
+    </div>
+    <div class="admin-content">
+      <div class="admin-section analytics-section">
+        <h3>📊 Analytics Dashboard</h3>
+        <div class="analytics-controls">
+          <select id="dateRangeSelect" onchange="updateAnalyticsView()">
+            <option value="7">Last 7 Days</option>
+            <option value="14" selected>Last 14 Days</option>
+          </select>
+          <button onclick="copyAnalyticsJSON()" class="copy-btn">📋 Copy JSON</button>
+        </div>
+        <div class="kpi-cards" id="kpiCards"></div>
+        <div class="charts-row">
+          <div class="chart-container">
+            <h4>Requests & Completed Trips</h4>
+            <svg id="lineChart" width="100%" height="200" viewBox="0 0 400 200"></svg>
+          </div>
+          <div class="chart-container">
+            <h4>Destination Type Distribution</h4>
+            <svg id="barChart" width="100%" height="200" viewBox="0 0 400 200"></svg>
+          </div>
+        </div>
+        <div class="funnel-table">
+          <h4>Conversion Funnel</h4>
+          <table id="funnelTable"></table>
+        </div>
+      </div>
+      <div class="admin-section">
+        <h3>Marketplace Controls</h3>
+        <div class="admin-toggle">
+          <span>Demand Level</span>
+          <select class="admin-select" id="demand-level" style="width:auto">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div class="admin-toggle">
+          <span>Scheduled Rides Enabled</span>
+          <div class="toggle-switch active" id="scheduled-toggle"></div>
+        </div>
+      </div>
+      <div class="admin-section">
+        <h3>Recent Rides (Last 10)</h3>
+        <div id="ride-logs"></div>
+      </div>
+      <div class="admin-section">
+        <h3>Incidents</h3>
+        <div id="incident-logs"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DOG_PROFILES = [
+  { id: 1, name: "Buddy", breed: "Golden Retriever", size: "large", avatar: "🦮", notes: "Very friendly, loves car rides" },
+  { id: 2, name: "Luna", breed: "French Bulldog", size: "small", avatar: "🐕", notes: "Gets anxious, needs calm environment" },
+  { id: 3, name: "Max", breed: "German Shepherd", size: "large", avatar: "🐕‍🦺", notes: "Well-trained, responds to commands" }
+];
+
+const DESTINATION_PRESETS = [
+  { id: 1, name: "Happy Paws Vet", type: "vet", icon: "🏥", address: "456 Veterinary Way" },
+  { id: 2, name: "Pampered Pups Groomer", type: "groomer", icon: "✂️", address: "789 Grooming Lane" },
+  { id: 3, name: "Doggy Daycare Plus", type: "daycare", icon: "🏠", address: "321 Daycare Drive" },
+  { id: 4, name: "Bark Park Central", type: "park", icon: "🌳", address: "555 Park Avenue" },
+  { id: 5, name: "Pet Emergency 24/7", type: "emergency", icon: "🚨", address: "911 Emergency Blvd" },
+  { id: 6, name: "Canine Training Co", type: "training", icon: "🎓", address: "222 Training Street" }
+];
+
+const DRIVERS = [
+  { id: 1, name: "Sarah M.", rating: 4.9, trips: 342, avatar: "👩", badges: ["verified", "insured", "certified"], vehicle: "Toyota Prius" },
+  { id: 2, name: "Mike R.", rating: 4.8, trips: 256, avatar: "👨", badges: ["verified", "insured"], vehicle: "Honda CR-V" },
+  { id: 3, name: "Emily K.", rating: 5.0, trips: 128, avatar: "👩‍🦰", badges: ["verified", "insured", "certified"], vehicle: "Subaru Outback" },
+  { id: 4, name: "James T.", rating: 4.7, trips: 89, avatar: "🧔", badges: ["verified", "insured"], vehicle: "Ford Escape" },
+  { id: 5, name: "Lisa W.", rating: 4.9, trips: 415, avatar: "👱‍♀️", badges: ["verified", "insured", "certified"], vehicle: "Hyundai Tucson" }
+];
+
+const TRIP_STATUSES = [
+  { key: "assigned", icon: "🚗", text: "Driver Assigned", sub: "{driver} is on the way" },
+  { key: "arriving", icon: "📍", text: "Driver Arriving", sub: "ETA: {eta} minutes" },
+  { key: "pickup", icon: "🐕", text: "At Pickup", sub: "{driver} has arrived" },
+  { key: "pickedup", icon: "✅", text: "Picked Up", sub: "{dog} is secured and happy" },
+  { key: "intransit", icon: "🚙", text: "In Transit", sub: "On the way to destination" },
+  { key: "arriving_dest", icon: "🏁", text: "Almost There", sub: "Arriving in {eta} minutes" },
+  { key: "dropped", icon: "🎉", text: "Dropped Off", sub: "{dog} has arrived safely!" }
+];
+
+let state = {
+  mode: "owner",
+  currentScreen: "owner-home",
+  selectedDog: null,
+  selectedDestination: null,
+  selectedTime: "asap",
+  scheduledTime: null,
+  specialInstructions: "",
+  assignedDriver: null,
+  tripStatus: 0,
+  tripPrice: 0,
+  demandLevel: "medium",
+  scheduledEnabled: true,
+  driverOnline: false,
+  currentRequest: null,
+  pickupChecklist: [false, false, false],
+  dropoffChecklist: [false, false],
+  pickupPhotoTaken: false,
+  dropoffPhotoTaken: false,
+  rideLogs: [],
+  incidentLogs: []
+};
+
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  state.currentScreen = screenId;
+}
+
+function updateDemandBanner() {
+  const banner = document.getElementById('demand-banner');
+  if (state.demandLevel === 'high' && state.mode === 'owner') {
+    banner.classList.remove('hidden');
+  } else {
+    banner.classList.add('hidden');
+  }
+}
+
+function getETA() {
+  const base = { low: 3, medium: 5, high: 12 };
+  return base[state.demandLevel] + Math.floor(Math.random() * 3);
+}
+
+function calculatePrice() {
+  const baseFare = 5.00;
+  const perMile = 2.50;
+  const distance = 3 + Math.random() * 5;
+  const sizeSurcharge = state.selectedDog?.size === 'large' ? 3.00 : state.selectedDog?.size === 'medium' ? 1.50 : 0;
+  const demandMultiplier = state.demandLevel === 'high' ? 1.5 : state.demandLevel === 'medium' ? 1.2 : 1.0;
+  const subtotal = (baseFare + (perMile * distance) + sizeSurcharge) * demandMultiplier;
+  const serviceFee = subtotal * 0.15;
+  const insurance = 1.50;
+  return {
+    baseFare,
+    distance: distance.toFixed(1),
+    mileageCost: (perMile * distance).toFixed(2),
+    sizeSurcharge: sizeSurcharge.toFixed(2),
+    demandMultiplier,
+    subtotal: subtotal.toFixed(2),
+    serviceFee: serviceFee.toFixed(2),
+    insurance: insurance.toFixed(2),
+    total: (subtotal + serviceFee + insurance).toFixed(2)
+  };
+}
+
+function renderPresets() {
+  const grid = document.getElementById('preset-grid');
+  grid.innerHTML = DESTINATION_PRESETS.map(d => `
+    <button class="preset-btn ${state.selectedDestination?.id === d.id ? 'selected' : ''}" data-dest-id="${d.id}">
+      <span class="icon">${d.icon}</span>
+      ${d.name.split(' ')[0]}
+    </button>
+  `).join('');
+  
+  grid.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dest = DESTINATION_PRESETS.find(d => d.id === parseInt(btn.dataset.destId));
+      state.selectedDestination = dest;
+      document.getElementById('dropoff-input').value = dest.name + ', ' + dest.address;
+      renderPresets();
+    });
+  });
+}
+
+function renderDogProfiles() {
+  const container = document.getElementById('dog-profiles');
+  container.innerHTML = DOG_PROFILES.map(dog => `
+    <div class="dog-profile ${state.selectedDog?.id === dog.id ? 'selected' : ''}" data-dog-id="${dog.id}">
+      <div class="dog-avatar">${dog.avatar}</div>
+      <div class="dog-info">
+        <h3>${dog.name}</h3>
+        <p>${dog.breed}</p>
+      </div>
+      <span class="size-badge size-${dog.size}">${dog.size.toUpperCase()}</span>
+    </div>
+  `).join('');
+  
+  container.querySelectorAll('.dog-profile').forEach(profile => {
+    profile.addEventListener('click', () => {
+      state.selectedDog = DOG_PROFILES.find(d => d.id === parseInt(profile.dataset.dogId));
+      renderDogProfiles();
+    });
+  });
+}
+
+function renderTripSummary() {
+  const container = document.getElementById('trip-summary');
+  container.innerHTML = `
+    <div class="detail-row"><span class="detail-icon">🐕</span> ${state.selectedDog?.name} (${state.selectedDog?.breed})</div>
+    <div class="detail-row"><span class="detail-icon">📍</span> ${document.getElementById('pickup-input').value}</div>
+    <div class="detail-row"><span class="detail-icon">🏁</span> ${document.getElementById('dropoff-input').value}</div>
+    <div class="detail-row"><span class="detail-icon">⏰</span> ${state.selectedTime === 'asap' ? 'ASAP (~' + getETA() + ' min)' : 'Scheduled: ' + new Date(state.scheduledTime).toLocaleString()}</div>
+    ${state.specialInstructions ? `<div class="detail-row"><span class="detail-icon">📝</span> ${state.specialInstructions}</div>` : ''}
+  `;
+}
+
+function renderPriceBreakdown() {
+  const price = calculatePrice();
+  state.tripPrice = parseFloat(price.total);
+  const container = document.getElementById('price-breakdown');
+  container.innerHTML = `
+    <div class="price-row"><span>Base fare</span><span>$${price.baseFare.toFixed(2)}</span></div>
+    <div class="price-row"><span>Distance (${price.distance} mi)</span><span>$${price.mileageCost}</span></div>
+    ${parseFloat(price.sizeSurcharge) > 0 ? `<div class="price-row"><span>Large dog surcharge</span><span>$${price.sizeSurcharge}</span></div>` : ''}
+    ${price.demandMultiplier > 1 ? `<div class="price-row"><span>High demand (${((price.demandMultiplier - 1) * 100).toFixed(0)}%)</span><span>included</span></div>` : ''}
+    <div class="price-row"><span>Service fee</span><span>$${price.serviceFee}</span></div>
+    <div class="price-row"><span>Insurance</span><span>$${price.insurance}</span></div>
+    <div class="price-row total"><span>Total</span><span>$${price.total}</span></div>
+  `;
+}
+
+function renderAssignedDriver() {
+  const driver = state.assignedDriver;
+  const container = document.getElementById('assigned-driver');
+  container.innerHTML = `
+    <div class="driver-avatar">${driver.avatar}</div>
+    <div class="driver-info">
+      <h3>${driver.name}</h3>
+      <p>${driver.vehicle}</p>
+      <div class="badges">
+        ${driver.badges.includes('verified') ? '<span class="badge badge-verified">✓ Verified</span>' : ''}
+        ${driver.badges.includes('insured') ? '<span class="badge badge-insured">🛡️ Insured</span>' : ''}
+        ${driver.badges.includes('certified') ? '<span class="badge badge-certified">🎓 Certified</span>' : ''}
+      </div>
+    </div>
+    <div class="rating"><span class="star">★</span> ${driver.rating}</div>
+  `;
+}
+
+function updateTripStatus() {
+  const status = TRIP_STATUSES[state.tripStatus];
+  const container = document.getElementById('trip-status');
+  const driver = state.assignedDriver;
+  const dog = state.selectedDog;
+  
+  let sub = status.sub
+    .replace('{driver}', driver?.name || 'Driver')
+    .replace('{dog}', dog?.name || 'Your pup')
+    .replace('{eta}', Math.floor(Math.random() * 5) + 2);
+  
+  container.innerHTML = `
+    <div class="status-icon">${status.icon}</div>
+    <div class="status-text">${status.text}</div>
+    <div class="status-sub">${sub}</div>
+  `;
+  
+  const progress = ((state.tripStatus + 1) / TRIP_STATUSES.length) * 100;
+  document.getElementById('trip-progress').style.width = progress + '%';
+}
+
+function simulateTrip() {
+  if (state.tripStatus < TRIP_STATUSES.length - 1) {
+    state.tripStatus++;
+    updateTripStatus();
+    
+    if (state.tripStatus === TRIP_STATUSES.length - 1) {
+      setTimeout(() => {
+        showReceipt();
+      }, 2000);
+    } else {
+      setTimeout(simulateTrip, 3000 + Math.random() * 2000);
+    }
+  }
+}
+
+function showReceipt() {
+  document.getElementById('receipt-amount').textContent = '$' + state.tripPrice.toFixed(2);
+  document.getElementById('receipt-details').innerHTML = `
+    <div class="detail-row"><span>🐕</span> ${state.selectedDog?.name}</div>
+    <div class="detail-row"><span>🚗</span> ${state.assignedDriver?.name}</div>
+    <div class="detail-row"><span>📍</span> ${document.getElementById('pickup-input').value}</div>
+    <div class="detail-row"><span>🏁</span> ${document.getElementById('dropoff-input').value}</div>
+    <div class="detail-row"><span>⏱️</span> Trip duration: ${Math.floor(Math.random() * 15) + 10} min</div>
+  `;
+  
+  state.rideLogs.unshift({
+    time: new Date().toLocaleTimeString(),
+    dog: state.selectedDog?.name,
+    destination: state.selectedDestination?.name,
+    driver: state.assignedDriver?.name,
+    amount: state.tripPrice.toFixed(2)
+  });
+  if (state.rideLogs.length > 10) state.rideLogs.pop();
+  
+  showScreen('owner-receipt');
+}
+
+function renderDriverRequest() {
+  const dog = DOG_PROFILES[Math.floor(Math.random() * DOG_PROFILES.length)];
+  const dest = DESTINATION_PRESETS[Math.floor(Math.random() * DESTINATION_PRESETS.length)];
+  const earnings = (10 + Math.random() * 10).toFixed(2);
+  
+  state.currentRequest = { dog, dest, earnings };
+  
+  const container = document.getElementById('request-card');
+  container.innerHTML = `
+    <div class="request-header">
+      <div class="request-dog-avatar">${dog.avatar}</div>
+      <div class="request-info">
+        <h3>${dog.name}</h3>
+        <p>${dog.breed} • ${dog.size}</p>
+      </div>
+    </div>
+    <div class="request-details">
+      <div class="detail-row"><span class="detail-icon">📍</span> 123 Main Street, Seattle</div>
+      <div class="detail-row"><span class="detail-icon">🏁</span> ${dest.name}</div>
+      <div class="detail-row"><span class="detail-icon">📏</span> ~${(2 + Math.random() * 4).toFixed(1)} miles</div>
+    </div>
+    <div class="handling-notes">
+      <strong>🐕 Handling Notes:</strong>
+      ${dog.notes}
+    </div>
+    <div class="earnings-badge">+$${earnings}</div>
+    <div class="request-actions">
+      <button class="btn btn-secondary" id="decline-request">Decline</button>
+      <button class="btn btn-success" id="accept-request">Accept</button>
+    </div>
+  `;
+  
+  document.getElementById('decline-request').addEventListener('click', () => {
+    showScreen('driver-home');
+    setTimeout(checkForRequests, 5000);
+  });
+  
+  document.getElementById('accept-request').addEventListener('click', () => {
+    showScreen('driver-pickup');
+    renderPickupChecklist();
+  });
+}
+
+function renderPickupChecklist() {
+  const container = document.getElementById('pickup-checklist');
+  const items = ['Leash secured properly', 'Verified dog matches profile photo', 'Owner confirmed pickup'];
+  
+  container.innerHTML = items.map((item, i) => `
+    <div class="checklist-item ${state.pickupChecklist[i] ? 'completed' : ''}" data-index="${i}">
+      <div class="checkbox">${state.pickupChecklist[i] ? '✓' : ''}</div>
+      <span class="checklist-text">${item}</span>
+    </div>
+  `).join('');
+  
+  container.querySelectorAll('.checklist-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const idx = parseInt(item.dataset.index);
+      state.pickupChecklist[idx] = !state.pickupChecklist[idx];
+      renderPickupChecklist();
+      checkPickupComplete();
+    });
+  });
+}
+
+function checkPickupComplete() {
+  const allChecked = state.pickupChecklist.every(c => c) && state.pickupPhotoTaken;
+  document.getElementById('start-trip-btn').disabled = !allChecked;
+}
+
+function renderDropoffChecklist() {
+  const container = document.getElementById('dropoff-checklist');
+  const items = ['Dog safely handed over', 'Recipient confirmed'];
+  
+  container.innerHTML = items.map((item, i) => `
+    <div class="checklist-item ${state.dropoffChecklist[i] ? 'completed' : ''}" data-index="${i}">
+      <div class="checkbox">${state.dropoffChecklist[i] ? '✓' : ''}</div>
+      <span class="checklist-text">${item}</span>
+    </div>
+  `).join('');
+  
+  container.querySelectorAll('.checklist-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const idx = parseInt(item.dataset.index);
+      state.dropoffChecklist[idx] = !state.dropoffChecklist[idx];
+      renderDropoffChecklist();
+      checkDropoffComplete();
+    });
+  });
+}
+
+function checkDropoffComplete() {
+  const allChecked = state.dropoffChecklist.every(c => c) && state.dropoffPhotoTaken;
+  document.getElementById('complete-trip-btn').disabled = !allChecked;
+}
+
+function checkForRequests() {
+  if (state.driverOnline && state.currentScreen === 'driver-home') {
+    showScreen('driver-request');
+    renderDriverRequest();
+  }
+}
+
+function renderRideLogs() {
+  const container = document.getElementById('ride-logs');
+  if (state.rideLogs.length === 0) {
+    container.innerHTML = '<div class="ride-log">No rides yet</div>';
+    return;
+  }
+  container.innerHTML = state.rideLogs.map(log => `
+    <div class="ride-log">
+      <div class="time">${log.time}</div>
+      <div>${log.dog} → ${log.destination}</div>
+      <div>Driver: ${log.driver} | $${log.amount}</div>
+    </div>
+  `).join('');
+}
+
+function renderIncidentLogs() {
+  const container = document.getElementById('incident-logs');
+  if (state.incidentLogs.length === 0) {
+    container.innerHTML = '<div class="ride-log">No incidents reported</div>';
+    return;
+  }
+  container.innerHTML = state.incidentLogs.map(log => `
+    <div class="ride-log incident-log">
+      <div class="time">${log.time}</div>
+      <div><strong>${log.type}</strong></div>
+      <div>${log.details}</div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.mode = btn.dataset.mode;
+    
+    if (state.mode === 'owner') {
+      showScreen('owner-home');
+    } else {
+      showScreen('driver-home');
+    }
+    updateDemandBanner();
+  });
+});
+
+document.querySelectorAll('.back-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    showScreen(btn.dataset.back);
+  });
+});
+
+document.getElementById('continue-to-dog').addEventListener('click', () => {
+  if (!document.getElementById('dropoff-input').value) {
+    alert('Please enter a destination');
+    return;
+  }
+  showScreen('owner-dog-select');
+  renderDogProfiles();
+});
+
+document.getElementById('continue-to-time').addEventListener('click', () => {
+  if (!state.selectedDog) {
+    alert('Please select a dog');
+    return;
+  }
+  state.specialInstructions = document.getElementById('special-instructions').value;
+  showScreen('owner-time-select');
+  document.getElementById('asap-eta').textContent = '~' + getETA() + ' min';
+  
+  const scheduledBtn = document.getElementById('scheduled-btn');
+  if (!state.scheduledEnabled) {
+    scheduledBtn.classList.add('scheduled-disabled');
+    scheduledBtn.querySelector('.sub').textContent = 'Unavailable';
+  } else {
+    scheduledBtn.classList.remove('scheduled-disabled');
+    scheduledBtn.querySelector('.sub').textContent = 'Pick a time';
+  }
+});
+
+document.querySelectorAll('.time-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.time === 'scheduled' && !state.scheduledEnabled) return;
+    
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.selectedTime = btn.dataset.time;
+    
+    document.getElementById('schedule-picker').style.display = 
+      state.selectedTime === 'scheduled' ? 'block' : 'none';
+  });
+});
+
+document.getElementById('schedule-time').addEventListener('change', (e) => {
+  state.scheduledTime = e.target.value;
+});
+
+document.getElementById('continue-to-price').addEventListener('click', () => {
+  if (state.selectedTime === 'scheduled' && !state.scheduledTime) {
+    alert('Please select a scheduled time');
+    return;
+  }
+  showScreen('owner-price');
+  renderTripSummary();
+  renderPriceBreakdown();
+});
+
+document.getElementById('confirm-request').addEventListener('click', () => {
+  showScreen('owner-matching');
+  
+  const matchDelay = state.demandLevel === 'high' ? 4000 : state.demandLevel === 'medium' ? 2500 : 1500;
+  
+  setTimeout(() => {
+    state.assignedDriver = DRIVERS[Math.floor(Math.random() * DRIVERS.length)];
+    state.tripStatus = 0;
+    showScreen('owner-trip');
+    renderAssignedDriver();
+    updateTripStatus();
+    setTimeout(simulateTrip, 3000);
+  }, matchDelay);
+});
+
+document.getElementById('new-ride').addEventListener('click', () => {
+  state.selectedDog = null;
+  state.selectedDestination = null;
+  state.tripStatus = 0;
+  document.getElementById('dropoff-input').value = '';
+  document.getElementById('special-instructions').value = '';
+  showScreen('owner-home');
+  renderPresets();
+});
+
+document.getElementById('rate-trip').addEventListener('click', () => {
+  alert('⭐ Thanks for rating! Your feedback helps us improve.');
+});
+
+document.getElementById('help-btn').addEventListener('click', () => {
+  document.getElementById('help-modal').classList.add('active');
+});
+
+document.getElementById('close-help').addEventListener('click', () => {
+  document.getElementById('help-modal').classList.remove('active');
+});
+
+document.getElementById('emergency-btn').addEventListener('click', () => {
+  document.getElementById('emergency-modal').classList.add('active');
+});
+
+document.getElementById('driver-emergency-btn').addEventListener('click', () => {
+  document.getElementById('emergency-modal').classList.add('active');
+});
+
+document.getElementById('close-emergency').addEventListener('click', () => {
+  document.getElementById('emergency-modal').classList.remove('active');
+});
+
+document.getElementById('call-driver').addEventListener('click', () => {
+  alert('📞 Calling ' + state.assignedDriver?.name + '...\n(Number masked for privacy)');
+});
+
+document.getElementById('text-driver').addEventListener('click', () => {
+  alert('💬 Opening chat with ' + state.assignedDriver?.name + '...\n(Messages are monitored for safety)');
+});
+
+document.getElementById('driver-toggle').addEventListener('click', () => {
+  state.driverOnline = !state.driverOnline;
+  const toggle = document.getElementById('driver-toggle');
+  const text = document.getElementById('driver-status-text');
+  
+  if (state.driverOnline) {
+    toggle.classList.add('active');
+    text.textContent = "You're online - waiting for requests";
+    setTimeout(checkForRequests, 3000);
+  } else {
+    toggle.classList.remove('active');
+    text.textContent = "You're offline";
+  }
+});
+
+document.getElementById('pickup-photo').addEventListener('click', () => {
+  const el = document.getElementById('pickup-photo');
+  el.classList.add('has-photo');
+  el.innerHTML = '<div class="icon">✅</div><div>Photo captured</div>';
+  state.pickupPhotoTaken = true;
+  checkPickupComplete();
+});
+
+document.getElementById('start-trip-btn').addEventListener('click', () => {
+  showScreen('driver-intransit');
+  document.getElementById('intransit-dog-avatar').textContent = state.currentRequest?.dog?.avatar || '🐕';
+  document.getElementById('intransit-dog-name').textContent = state.currentRequest?.dog?.name || 'Dog';
+  document.getElementById('intransit-destination').textContent = '→ ' + (state.currentRequest?.dest?.name || 'Destination');
+});
+
+document.getElementById('driver-call-owner').addEventListener('click', () => {
+  alert('📞 Calling pet owner...\n(Number masked for privacy)');
+});
+
+document.getElementById('driver-text-owner').addEventListener('click', () => {
+  alert('💬 Opening chat with pet owner...');
+});
+
+document.getElementById('report-issue-btn').addEventListener('click', () => {
+  document.getElementById('incident-modal').classList.add('active');
+});
+
+document.getElementById('close-incident').addEventListener('click', () => {
+  document.getElementById('incident-modal').classList.remove('active');
+});
+
+document.getElementById('submit-incident').addEventListener('click', () => {
+  const type = document.getElementById('incident-type').value;
+  const details = document.getElementById('incident-details').value;
+  
+  if (type && details) {
+    state.incidentLogs.unshift({
+      time: new Date().toLocaleTimeString(),
+      type: type,
+      details: details
+    });
+    alert('Report submitted. Our safety team will review.');
+    document.getElementById('incident-modal').classList.remove('active');
+    document.getElementById('incident-type').value = '';
+    document.getElementById('incident-details').value = '';
+  }
+});
+
+document.getElementById('arrive-btn').addEventListener('click', () => {
+  showScreen('driver-dropoff');
+  state.dropoffChecklist = [false, false];
+  state.dropoffPhotoTaken = false;
+  renderDropoffChecklist();
+  
+  const photoEl = document.getElementById('dropoff-photo');
+  photoEl.classList.remove('has-photo');
+  photoEl.innerHTML = '<div class="icon">📷</div><div>Tap to take dropoff photo</div>';
+});
+
+document.getElementById('dropoff-photo').addEventListener('click', () => {
+  const el = document.getElementById('dropoff-photo');
+  el.classList.add('has-photo');
+  el.innerHTML = '<div class="icon">✅</div><div>Photo captured</div>';
+  state.dropoffPhotoTaken = true;
+  checkDropoffComplete();
+});
+
+document.getElementById('complete-trip-btn').addEventListener('click', () => {
+  showScreen('driver-summary');
+  const earnings = state.currentRequest?.earnings || '15.00';
+  document.getElementById('driver-earnings').textContent = '+$' + earnings;
+  document.getElementById('driver-summary-details').innerHTML = `
+    <div class="detail-row"><span>🐕</span> ${state.currentRequest?.dog?.name || 'Dog'}</div>
+    <div class="detail-row"><span>🏁</span> ${state.currentRequest?.dest?.name || 'Destination'}</div>
+    <div class="detail-row"><span>⏱️</span> Trip time: ${Math.floor(Math.random() * 15) + 10} min</div>
+    <div class="detail-row"><span>📏</span> Distance: ${(2 + Math.random() * 4).toFixed(1)} mi</div>
+  `;
+  
+  state.rideLogs.unshift({
+    time: new Date().toLocaleTimeString(),
+    dog: state.currentRequest?.dog?.name,
+    destination: state.currentRequest?.dest?.name,
+    driver: 'You',
+    amount: earnings
+  });
+  if (state.rideLogs.length > 10) state.rideLogs.pop();
+});
+
+document.getElementById('driver-done').addEventListener('click', () => {
+  state.pickupChecklist = [false, false, false];
+  state.pickupPhotoTaken = false;
+  state.currentRequest = null;
+  
+  const pickupPhotoEl = document.getElementById('pickup-photo');
+  pickupPhotoEl.classList.remove('has-photo');
+  pickupPhotoEl.innerHTML = '<div class="icon">📷</div><div>Tap to take pickup photo</div>';
+  
+  showScreen('driver-home');
+  if (state.driverOnline) {
+    setTimeout(checkForRequests, 5000);
+  }
+});
+
+document.getElementById('demand-level').addEventListener('change', (e) => {
+  state.demandLevel = e.target.value;
+  updateDemandBanner();
+});
+
+document.getElementById('scheduled-toggle').addEventListener('click', () => {
+  state.scheduledEnabled = !state.scheduledEnabled;
+  const toggle = document.getElementById('scheduled-toggle');
+  toggle.classList.toggle('active', state.scheduledEnabled);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 'a') {
+    const panel = document.getElementById('admin-panel');
+    panel.classList.toggle('active');
+    if (panel.classList.contains('active')) {
+      renderRideLogs();
+      renderIncidentLogs();
+    }
+  }
+});
+
+renderPresets();
+updateDemandBanner();
+
+
+    // ========== FAKE MIXPANEL ANALYTICS DATA ==========
+    // Seeded random for deterministic data
+    function seededRandom(seed) {
+      const x = Math.sin(seed++) * 10000;
+      return x - Math.floor(x);
+    }
+    let randomSeed = 12345;
+    function rand() { return seededRandom(randomSeed++); }
+    function randInt(min, max) { return Math.floor(rand() * (max - min + 1)) + min; }
+    function randFloat(min, max, decimals = 2) { return parseFloat((rand() * (max - min) + min).toFixed(decimals)); }
+    function pickRandom(arr) { return arr[Math.floor(rand() * arr.length)]; }
+
+    // Generate dates for last 14 days
+    const today = new Date('2026-02-03');
+    const dates = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      dates.push(d.toISOString().split('T')[0]);
+    }
+
+    // Funnel steps
+    const funnelSteps = ['app_open', 'home_view', 'destination_selected', 'dog_selected', 'time_selected', 'price_viewed', 'request_confirmed', 'matched', 'pickup_started', 'trip_completed', 'rated'];
+    const destinationTypes = ['vet', 'groomer', 'daycare', 'park', 'emergency', 'training'];
+    const dogSizes = ['small', 'medium', 'large'];
+    const demandLevels = ['low', 'medium', 'high'];
+    const cities = ['San Francisco', 'Los Angeles', 'Seattle', 'Portland', 'Austin'];
+    const devices = ['iOS', 'Android'];
+    const appVersions = ['1.0.0', '1.0.1', '1.1.0'];
+
+    // Generate daily funnel data
+    function generateDailyFunnel() {
+      const data = {};
+      dates.forEach(date => {
+        randomSeed = parseInt(date.replace(/-/g, ''));
+        let count = randInt(800, 1200);
+        const dayData = {};
+        funnelSteps.forEach((step, i) => {
+          dayData[step] = count;
+          if (i < funnelSteps.length - 1) {
+            const dropoff = i < 3 ? randFloat(0.85, 0.95) : randFloat(0.75, 0.92);
+            count = Math.floor(count * dropoff);
+          }
+        });
+        data[date] = dayData;
+      });
+      return data;
+    }
+
+    // Generate marketplace metrics
+    function generateMarketplaceMetrics() {
+      const data = {};
+      dates.forEach(date => {
+        randomSeed = parseInt(date.replace(/-/g, '')) + 1000;
+        const requests = randInt(150, 280);
+        const matches = Math.floor(requests * randFloat(0.82, 0.94));
+        data[date] = {
+          requests,
+          matches,
+          fulfillment_rate: parseFloat((matches / requests * 100).toFixed(1)),
+          avg_match_time_sec: randInt(25, 65),
+          avg_pickup_eta_min: randInt(4, 12),
+          avg_trip_duration_min: randInt(12, 28),
+          cancel_rate: randFloat(3.5, 8.2),
+          incident_rate: randFloat(0.1, 0.8)
+        };
+      });
+      return data;
+    }
+
+    // Generate segment breakdowns
+    function generateSegmentBreakdowns() {
+      randomSeed = 54321;
+      const byDestination = {};
+      destinationTypes.forEach(type => {
+        byDestination[type] = { requests: randInt(180, 450), completed: randInt(150, 400), avg_fare: randFloat(18, 45) };
+      });
+      const byDogSize = {};
+      dogSizes.forEach(size => {
+        byDogSize[size] = { requests: randInt(300, 700), completed: randInt(250, 600), avg_duration_min: randInt(14, 26) };
+      });
+      const byDemand = {};
+      demandLevels.forEach(level => {
+        byDemand[level] = { requests: randInt(400, 800), surge_multiplier: level === 'high' ? randFloat(1.3, 1.8) : level === 'medium' ? randFloat(1.0, 1.2) : 1.0 };
+      });
+      return { by_destination_type: byDestination, by_dog_size: byDogSize, by_demand_level: byDemand };
+    }
+
+    // Generate driver metrics
+    function generateDriverMetrics() {
+      const data = {};
+      dates.forEach(date => {
+        randomSeed = parseInt(date.replace(/-/g, '')) + 2000;
+        data[date] = {
+          online_drivers: randInt(45, 85),
+          requests_shown: randInt(140, 260),
+          accept_rate: randFloat(72, 89),
+          avg_time_to_accept_sec: randInt(8, 22),
+          checklist_completion_rate: randFloat(94, 99.5)
+        };
+      });
+      return data;
+    }
+
+    // Generate event-level records (200 events)
+    function generateEventRecords() {
+      const events = [];
+      const eventTypes = ['app_open', 'request_confirmed', 'trip_completed', 'driver_accepted', 'rating_submitted', 'destination_searched'];
+      randomSeed = 99999;
+      for (let i = 0; i < 200; i++) {
+        const dayOffset = randInt(0, 13);
+        const eventDate = new Date(today);
+        eventDate.setDate(eventDate.getDate() - dayOffset);
+        eventDate.setHours(randInt(6, 23), randInt(0, 59), randInt(0, 59));
+        events.push({
+          event: pickRandom(eventTypes),
+          distinct_id: 'user_' + randInt(1000, 9999),
+          time: Math.floor(eventDate.getTime() / 1000),
+          properties: {
+            device: pickRandom(devices),
+            city: pickRandom(cities),
+            user_type: rand() > 0.15 ? 'pet_owner' : 'driver',
+            dog_size: pickRandom(dogSizes),
+            destination_type: pickRandom(destinationTypes),
+            demand_level: pickRandom(demandLevels),
+            app_version: pickRandom(appVersions)
+          }
+        });
+      }
+      return events.sort((a, b) => b.time - a.time);
+    }
+
+    // Assemble full dataset
+    const FAKE_MIXPANEL = {
+      generated_at: '2026-02-03T16:18:26-08:00',
+      date_range: { start: dates[0], end: dates[dates.length - 1] },
+      daily_funnel: generateDailyFunnel(),
+      marketplace_metrics: generateMarketplaceMetrics(),
+      segment_breakdowns: generateSegmentBreakdowns(),
+      driver_metrics: generateDriverMetrics(),
+      event_records: generateEventRecords()
+    };
+
+    // ========== ANALYTICS UI RENDERING ==========
+    function updateAnalyticsView() {
+      const days = parseInt(document.getElementById('dateRangeSelect').value);
+      const filteredDates = dates.slice(-days);
+      renderKPIs(filteredDates);
+      renderLineChart(filteredDates);
+      renderBarChart();
+      renderFunnelTable(filteredDates);
+    }
+
+    function renderKPIs(filteredDates) {
+      let totalRequests = 0, totalCompleted = 0, totalMatchTime = 0, totalCancelRate = 0, totalIncidents = 0;
+      filteredDates.forEach(date => {
+        const m = FAKE_MIXPANEL.marketplace_metrics[date];
+        totalRequests += m.requests;
+        totalCompleted += m.matches;
+        totalMatchTime += m.avg_match_time_sec;
+        totalCancelRate += m.cancel_rate;
+        totalIncidents += m.incident_rate;
+      });
+      const n = filteredDates.length;
+      const kpis = [
+        { label: 'Total Requests', value: totalRequests.toLocaleString() },
+        { label: 'Completed Trips', value: totalCompleted.toLocaleString() },
+        { label: 'Fulfillment Rate', value: ((totalCompleted / totalRequests) * 100).toFixed(1) + '%' },
+        { label: 'Avg Match Time', value: (totalMatchTime / n).toFixed(0) + 's' },
+        { label: 'Avg Cancel Rate', value: (totalCancelRate / n).toFixed(1) + '%' },
+        { label: 'Incidents', value: (totalIncidents / n).toFixed(2) + '%' }
+      ];
+      document.getElementById('kpiCards').innerHTML = kpis.map(k => `<div class="kpi-card"><div class="value">${k.value}</div><div class="label">${k.label}</div></div>`).join('');
+    }
+
+    function renderLineChart(filteredDates) {
+      const svg = document.getElementById('lineChart');
+      const requests = filteredDates.map(d => FAKE_MIXPANEL.marketplace_metrics[d].requests);
+      const completed = filteredDates.map(d => FAKE_MIXPANEL.marketplace_metrics[d].matches);
+      const maxVal = Math.max(...requests, ...completed);
+      const w = 380, h = 160, padding = 30;
+      const xStep = (w - padding * 2) / (filteredDates.length - 1);
+      const scale = (v) => h - padding - (v / maxVal) * (h - padding * 2);
+      let reqPath = `M ${padding} ${scale(requests[0])}`;
+      let compPath = `M ${padding} ${scale(completed[0])}`;
+      for (let i = 1; i < filteredDates.length; i++) {
+        reqPath += ` L ${padding + i * xStep} ${scale(requests[i])}`;
+        compPath += ` L ${padding + i * xStep} ${scale(completed[i])}`;
+      }
+      svg.innerHTML = `
+        <line x1="${padding}" y1="${h - padding}" x2="${w - padding}" y2="${h - padding}" stroke="#444" />
+        <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${h - padding}" stroke="#444" />
+        <path d="${reqPath}" fill="none" stroke="#00d4ff" stroke-width="2" />
+        <path d="${compPath}" fill="none" stroke="#4ade80" stroke-width="2" />
+        <text x="${w - 80}" y="20" fill="#00d4ff" font-size="10">● Requests</text>
+        <text x="${w - 80}" y="35" fill="#4ade80" font-size="10">● Completed</text>
+      `;
+    }
+
+    function renderBarChart() {
+      const svg = document.getElementById('barChart');
+      const data = FAKE_MIXPANEL.segment_breakdowns.by_destination_type;
+      const types = Object.keys(data);
+      const values = types.map(t => data[t].requests);
+      const maxVal = Math.max(...values);
+      const w = 380, h = 160, padding = 30;
+      const barWidth = (w - padding * 2) / types.length - 8;
+      let bars = '';
+      types.forEach((type, i) => {
+        const barH = (data[type].requests / maxVal) * (h - padding * 2);
+        const x = padding + i * (barWidth + 8) + 4;
+        const y = h - padding - barH;
+        const colors = ['#00d4ff', '#4ade80', '#f472b6', '#fbbf24', '#a78bfa', '#fb7185'];
+        bars += `<rect x="${x}" y="${y}" width="${barWidth}" height="${barH}" fill="${colors[i]}" rx="2" />`;
+        bars += `<text x="${x + barWidth / 2}" y="${h - 10}" fill="#888" font-size="8" text-anchor="middle">${type.slice(0, 4)}</text>`;
+        bars += `<text x="${x + barWidth / 2}" y="${y - 5}" fill="#fff" font-size="9" text-anchor="middle">${data[type].requests}</text>`;
+      });
+      svg.innerHTML = bars;
+    }
+
+    function renderFunnelTable(filteredDates) {
+      const totals = {};
+      funnelSteps.forEach(step => totals[step] = 0);
+      filteredDates.forEach(date => {
+        funnelSteps.forEach(step => totals[step] += FAKE_MIXPANEL.daily_funnel[date][step]);
+      });
+      const startVal = totals[funnelSteps[0]];
+      let html = '<tr><th>Step</th><th>Count</th><th>Conversion</th></tr>';
+      funnelSteps.forEach((step, i) => {
+        const conv = ((totals[step] / startVal) * 100).toFixed(1);
+        const stepConv = i > 0 ? ((totals[step] / totals[funnelSteps[i - 1]]) * 100).toFixed(1) + '%' : '100%';
+        html += `<tr><td>${step.replace(/_/g, ' ')}</td><td>${totals[step].toLocaleString()}</td><td class="conversion">${conv}% (${stepConv})</td></tr>`;
+      });
+      document.getElementById('funnelTable').innerHTML = html;
+    }
+
+    function copyAnalyticsJSON() {
+      navigator.clipboard.writeText(JSON.stringify(FAKE_MIXPANEL, null, 2)).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy JSON', 2000);
+      });
+    }
+
+    // Initialize analytics on admin panel open
+    const origToggleAdmin = typeof toggleAdmin === 'function' ? toggleAdmin : null;
+    document.addEventListener('keydown', function(e) {
+      if (e.key.toLowerCase() === 'a') {
+        setTimeout(() => {
+          if (document.getElementById('adminPanel') && document.getElementById('adminPanel').classList.contains('active')) {
+            updateAnalyticsView();
+          }
+        }, 100);
+      }
+    });
+    </script>
+
+
+
+<!-- Admin Analytics Panel -->
+<div id="admin-panel" class="admin-panel" style="display:none;">
+  <div class="admin-header">
+    <h2>🔧 Admin / Operations Panel</h2>
+    <button class="admin-close" onclick="toggleAdminPanel()">✕</button>
+  </div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="switchAdminTab('analytics')">📊 Analytics</button>
+    <button class="admin-tab" onclick="switchAdminTab('operations')">🚗 Operations</button>
+  </div>
+  <div id="analytics-tab" class="admin-tab-content">
+    <div class="date-range-selector">
+      <button class="range-btn active" onclick="setDateRange(7)">Last 7 Days</button>
+      <button class="range-btn" onclick="setDateRange(14)">Last 14 Days</button>
+    </div>
+    <div class="kpi-cards">
+      <div class="kpi-card"><div class="kpi-value" id="kpi-requests">0</div><div class="kpi-label">Requests</div></div>
+      <div class="kpi-card"><div class="kpi-value" id="kpi-completed">0</div><div class="kpi-label">Completed Trips</div></div>
+      <div class="kpi-card"><div class="kpi-value" id="kpi-fulfillment">0%</div><div class="kpi-label">Fulfillment Rate</div></div>
+      <div class="kpi-card"><div class="kpi-value" id="kpi-match-time">0s</div><div class="kpi-label">Avg Match Time</div></div>
+      <div class="kpi-card"><div class="kpi-value" id="kpi-cancel">0%</div><div class="kpi-label">Cancel Rate</div></div>
+      <div class="kpi-card"><div class="kpi-value" id="kpi-incidents">0</div><div class="kpi-label">Incidents</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-container">
+        <h4>Requests & Completed Trips (Daily)</h4>
+        <svg id="line-chart" width="400" height="200" viewBox="0 0 400 200"></svg>
+      </div>
+      <div class="chart-container">
+        <h4>Destination Type Distribution</h4>
+        <svg id="bar-chart" width="300" height="200" viewBox="0 0 300 200"></svg>
+      </div>
+    </div>
+    <div class="funnel-section">
+      <h4>Conversion Funnel</h4>
+      <table class="funnel-table">
+        <thead><tr><th>Step</th><th>Count</th><th>Conversion %</th></tr></thead>
+        <tbody id="funnel-tbody"></tbody>
+      </table>
+    </div>
+    <div class="segment-section">
+      <h4>Segment Breakdown</h4>
+      <div class="segment-tables">
+        <div><h5>By Destination Type</h5><table id="segment-destination" class="segment-table"></table></div>
+        <div><h5>By Dog Size</h5><table id="segment-dogsize" class="segment-table"></table></div>
+        <div><h5>By Demand Level</h5><table id="segment-demand" class="segment-table"></table></div>
+      </div>
+    </div>
+    <div class="driver-metrics">
+      <h4>Driver-Side Metrics (Avg)</h4>
+      <div class="driver-kpis">
+        <div class="driver-kpi"><span id="driver-online">0</span> Online Drivers</div>
+        <div class="driver-kpi"><span id="driver-shown">0</span> Requests Shown</div>
+        <div class="driver-kpi"><span id="driver-accept">0%</span> Accept Rate</div>
+        <div class="driver-kpi"><span id="driver-time">0s</span> Avg Accept Time</div>
+        <div class="driver-kpi"><span id="driver-checklist">0%</span> Checklist Completion</div>
+      </div>
+    </div>
+    <button class="copy-json-btn" onclick="copyAnalyticsJSON()">📋 Copy JSON</button>
+  </div>
+  <div id="operations-tab" class="admin-tab-content" style="display:none;">
+    <p>Operations dashboard coming soon...</p>
+  </div>
+</div>
+
+<style>
+.admin-panel { position:fixed; top:0; left:0; right:0; bottom:0; background:#1a1a2e; color:#fff; z-index:9999; overflow-y:auto; padding:20px; }
+.admin-header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:15px; margin-bottom:20px; }
+.admin-header h2 { margin:0; font-size:24px; }
+.admin-close { background:#ff4757; border:none; color:#fff; width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:18px; }
+.admin-tabs { display:flex; gap:10px; margin-bottom:20px; }
+.admin-tab { background:#2d2d44; border:none; color:#fff; padding:10px 20px; border-radius:8px; cursor:pointer; font-size:14px; }
+.admin-tab.active { background:#6c5ce7; }
+.date-range-selector { margin-bottom:20px; }
+.range-btn { background:#2d2d44; border:none; color:#fff; padding:8px 16px; margin-right:10px; border-radius:6px; cursor:pointer; }
+.range-btn.active { background:#00b894; }
+.kpi-cards { display:grid; grid-template-columns:repeat(6,1fr); gap:15px; margin-bottom:25px; }
+.kpi-card { background:#2d2d44; padding:20px; border-radius:12px; text-align:center; }
+.kpi-value { font-size:28px; font-weight:bold; color:#00b894; }
+.kpi-label { font-size:12px; color:#888; margin-top:5px; }
+.charts-row { display:flex; gap:30px; margin-bottom:25px; flex-wrap:wrap; }
+.chart-container { background:#2d2d44; padding:20px; border-radius:12px; }
+.chart-container h4 { margin:0 0 15px 0; font-size:14px; color:#ddd; }
+.funnel-section, .segment-section, .driver-metrics { background:#2d2d44; padding:20px; border-radius:12px; margin-bottom:20px; }
+.funnel-section h4, .segment-section h4, .driver-metrics h4 { margin:0 0 15px 0; font-size:16px; }
+.funnel-table, .segment-table { width:100%; border-collapse:collapse; font-size:13px; }
+.funnel-table th, .funnel-table td, .segment-table th, .segment-table td { padding:8px 12px; text-align:left; border-bottom:1px solid #444; }
+.funnel-table th, .segment-table th { color:#888; }
+.segment-tables { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.segment-tables h5 { margin:0 0 10px 0; font-size:13px; color:#aaa; }
+.driver-kpis { display:flex; gap:30px; flex-wrap:wrap; }
+.driver-kpi { background:#1a1a2e; padding:12px 20px; border-radius:8px; font-size:14px; }
+.driver-kpi span { color:#fdcb6e; font-weight:bold; margin-right:5px; }
+.copy-json-btn { background:#6c5ce7; border:none; color:#fff; padding:12px 24px; border-radius:8px; cursor:pointer; font-size:14px; margin-top:10px; }
+.copy-json-btn:hover { background:#5b4cdb; }
+@media(max-width:900px) { .kpi-cards { grid-template-columns:repeat(3,1fr); } .segment-tables { grid-template-columns:1fr; } }
+</style>
+
+<script>
+// Seeded random number generator for deterministic data
+function seededRandom(seed) {
+  return function() {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
+}
+const rand = seededRandom(20260203);
+
+// Generate fake Mixpanel-like analytics data
+const FAKE_MIXPANEL = (function() {
+  const data = { daily_funnel: [], marketplace_metrics: [], segments: {}, driver_metrics: [], events: [] };
+  const funnelSteps = ['app_open','home_view','destination_selected','dog_selected','time_selected','price_viewed','request_confirmed','matched','pickup_started','trip_completed','rated'];
+  const destTypes = ['vet','groomer','daycare','park','emergency','training'];
+  const dogSizes = ['small','medium','large'];
+  const demandLevels = ['low','medium','high'];
+  const cities = ['Seattle','Portland','San Francisco','Los Angeles','Denver'];
+  const devices = ['iOS','Android'];
+  const baseDate = new Date('2026-01-20T00:00:00Z');
+  
+  // Generate 14 days of data
+  for(let d=0; d<14; d++) {
+    const date = new Date(baseDate.getTime() + d*86400000).toISOString().split('T')[0];
+    const dayOfWeek = new Date(baseDate.getTime() + d*86400000).getDay();
+    const isWeekend = dayOfWeek===0||dayOfWeek===6;
+    const baseTraffic = isWeekend ? 180 : 120;
+    
+    // Daily funnel
+    const funnel = {};
+    let count = Math.floor(baseTraffic + rand()*60);
+    funnelSteps.forEach((step,i) => {
+      funnel[step] = count;
+      const dropoff = i<3 ? 0.92+rand()*0.05 : (i<7 ? 0.85+rand()*0.08 : 0.90+rand()*0.08);
+      count = Math.floor(count * dropoff);
+    });
+    data.daily_funnel.push({ date, ...funnel });
+    
+    // Marketplace metrics
+    const requests = funnel.request_confirmed;
+    const matches = funnel.matched;
+    const completed = funnel.trip_completed;
+    const fulfillment = requests>0 ? (completed/requests*100).toFixed(1) : 0;
+    const cancelRate = (2+rand()*6).toFixed(1);
+    const incidentRate = (rand()*0.8).toFixed(2);
+    data.marketplace_metrics.push({
+      date, requests, matches, completed,
+      fulfillment_rate: parseFloat(fulfillment),
+      avg_match_time_sec: Math.floor(25+rand()*35),
+      avg_pickup_eta_min: Math.floor(4+rand()*8),
+      avg_trip_duration_min: Math.floor(12+rand()*18),
+      cancel_rate: parseFloat(cancelRate),
+      incident_rate: parseFloat(incidentRate),
+      incidents: Math.floor(completed * parseFloat(incidentRate) / 100)
+    });
+    
+    // Driver metrics
+    data.driver_metrics.push({
+      date,
+      online_drivers: Math.floor(35+rand()*25),
+      requests_shown: Math.floor(requests*1.8+rand()*20),
+      accept_rate: parseFloat((72+rand()*18).toFixed(1)),
+      avg_time_to_accept_sec: Math.floor(8+rand()*12),
+      checklist_completion_rate: parseFloat((88+rand()*10).toFixed(1))
+    });
+  }
+  
+  // Segment breakdowns (aggregated)
+  data.segments.by_destination_type = destTypes.map(t => ({
+    type: t, requests: Math.floor(80+rand()*200), completed: Math.floor(60+rand()*150), avg_fare: parseFloat((18+rand()*25).toFixed(2))
+  }));
+  data.segments.by_dog_size = dogSizes.map(s => ({
+    size: s, requests: Math.floor(150+rand()*300), completed: Math.floor(120+rand()*250), avg_fare: parseFloat((20+rand()*15).toFixed(2))
+  }));
+  data.segments.by_demand_level = demandLevels.map(l => ({
+    level: l, requests: Math.floor(100+rand()*250), avg_surge: l==='high'?parseFloat((1.2+rand()*0.8).toFixed(2)):1.0, avg_match_time_sec: l==='high'?Math.floor(45+rand()*30):Math.floor(20+rand()*20)
+  }));
+  
+  // Generate 200 event-level records
+  for(let i=0; i<200; i++) {
+    const dayOffset = Math.floor(rand()*14);
+    const eventTime = Math.floor((baseDate.getTime()/1000) + dayOffset*86400 + rand()*86400);
+    const eventTypes = ['app_open','home_view','destination_selected','request_confirmed','trip_completed','rated'];
+    const eventType = eventTypes[Math.floor(rand()*eventTypes.length)];
+    data.events.push({
+      event: eventType,
+      distinct_id: 'user_'+Math.floor(1000+rand()*9000),
+      time: eventTime,
+      properties: {
+        device: devices[Math.floor(rand()*devices.length)],
+        city: cities[Math.floor(rand()*cities.length)],
+        user_type: rand()>0.15?'rider':'driver',
+        dog_size: dogSizes[Math.floor(rand()*dogSizes.length)],
+        destination_type: destTypes[Math.floor(rand()*destTypes.length)],
+        demand_level: demandLevels[Math.floor(rand()*demandLevels.length)],
+        app_version: '1.'+Math.floor(rand()*3)+'.'+Math.floor(rand()*10)
+      }
+    });
+  }
+  
+  return data;
+})();
+
+let currentDateRange = 14;
+
+function toggleAdminPanel() {
+  const panel = document.getElementById('admin-panel');
+  if(panel.style.display==='none') {
+    panel.style.display='block';
+    renderAnalytics();
+  } else {
+    panel.style.display='none';
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if(e.key==='a'||e.key==='A') { toggleAdminPanel(); }
+});
+
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-content').forEach(c=>c.style.display='none');
+  event.target.classList.add('active');
+  document.getElementById(tab+'-tab').style.display='block';
+}
+
+function setDateRange(days) {
+  currentDateRange = days;
+  document.querySelectorAll('.range-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderAnalytics();
+}
+
+function renderAnalytics() {
+  const metrics = FAKE_MIXPANEL.marketplace_metrics.slice(-currentDateRange);
+  const funnel = FAKE_MIXPANEL.daily_funnel.slice(-currentDateRange);
+  const drivers = FAKE_MIXPANEL.driver_metrics.slice(-currentDateRange);
+  
+  // KPIs
+  const totalRequests = metrics.reduce((s,m)=>s+m.requests,0);
+  const totalCompleted = metrics.reduce((s,m)=>s+m.completed,0);
+  const avgFulfillment = (metrics.reduce((s,m)=>s+m.fulfillment_rate,0)/metrics.length).toFixed(1);
+  const avgMatchTime = Math.round(metrics.reduce((s,m)=>s+m.avg_match_time_sec,0)/metrics.length);
+  const avgCancel = (metrics.reduce((s,m)=>s+m.cancel_rate,0)/metrics.length).toFixed(1);
+  const totalIncidents = metrics.reduce((s,m)=>s+m.incidents,0);
+  
+  document.getElementById('kpi-requests').textContent = totalRequests;
+  document.getElementById('kpi-completed').textContent = totalCompleted;
+  document.getElementById('kpi-fulfillment').textContent = avgFulfillment+'%';
+  document.getElementById('kpi-match-time').textContent = avgMatchTime+'s';
+  document.getElementById('kpi-cancel').textContent = avgCancel+'%';
+  document.getElementById('kpi-incidents').textContent = totalIncidents;
+  
+  // Line chart
+  renderLineChart(metrics);
+  
+  // Bar chart
+  renderBarChart();
+  
+  // Funnel table
+  const funnelSteps = ['app_open','home_view','destination_selected','dog_selected','time_selected','price_viewed','request_confirmed','matched','pickup_started','trip_completed','rated'];
+  const funnelTotals = {};
+  funnelSteps.forEach(step => { funnelTotals[step] = funnel.reduce((s,f)=>s+f[step],0); });
+  const funnelTbody = document.getElementById('funnel-tbody');
+  funnelTbody.innerHTML = funnelSteps.map((step,i) => {
+    const conv = i===0?'100%':((funnelTotals[step]/funnelTotals[funnelSteps[0]])*100).toFixed(1)+'%';
+    return `<tr><td>${step.replace(/_/g,' ')}</td><td>${funnelTotals[step]}</td><td>${conv}</td></tr>`;
+  }).join('');
+  
+  // Segment tables
+  const destTable = document.getElementById('segment-destination');
+  destTable.innerHTML = '<tr><th>Type</th><th>Requests</th><th>Completed</th></tr>' + 
+    FAKE_MIXPANEL.segments.by_destination_type.map(s=>`<tr><td>${s.type}</td><td>${s.requests}</td><td>${s.completed}</td></tr>`).join('');
+  
+  const sizeTable = document.getElementById('segment-dogsize');
+  sizeTable.innerHTML = '<tr><th>Size</th><th>Requests</th><th>Completed</th></tr>' + 
+    FAKE_MIXPANEL.segments.by_dog_size.map(s=>`<tr><td>${s.size}</td><td>${s.requests}</td><td>${s.completed}</td></tr>`).join('');
+  
+  const demandTable = document.getElementById('segment-demand');
+  demandTable.innerHTML = '<tr><th>Level</th><th>Requests</th><th>Avg Surge</th></tr>' + 
+    FAKE_MIXPANEL.segments.by_demand_level.map(s=>`<tr><td>${s.level}</td><td>${s.requests}</td><td>${s.avg_surge}x</td></tr>`).join('');
+  
+  // Driver metrics
+  const avgOnline = Math.round(drivers.reduce((s,d)=>s+d.online_drivers,0)/drivers.length);
+  const avgShown = Math.round(drivers.reduce((s,d)=>s+d.requests_shown,0)/drivers.length);
+  const avgAccept = (drivers.reduce((s,d)=>s+d.accept_rate,0)/drivers.length).toFixed(1);
+  const avgAcceptTime = Math.round(drivers.reduce((s,d)=>s+d.avg_time_to_accept_sec,0)/drivers.length);
+  const avgChecklist = (drivers.reduce((s,d)=>s+d.checklist_completion_rate,0)/drivers.length).toFixed(1);
+  
+  document.getElementById('driver-online').textContent = avgOnline;
+  document.getElementById('driver-shown').textContent = avgShown;
+  document.getElementById('driver-accept').textContent = avgAccept+'%';
+  document.getElementById('driver-time').textContent = avgAcceptTime+'s';
+  document.getElementById('driver-checklist').textContent = avgChecklist+'%';
+}
+
+function renderLineChart(metrics) {
+  const svg = document.getElementById('line-chart');
+  const w=400, h=200, pad=40;
+  const maxVal = Math.max(...metrics.map(m=>m.requests));
+  const xStep = (w-pad*2)/(metrics.length-1);
+  
+  let requestsPath = 'M';
+  let completedPath = 'M';
+  metrics.forEach((m,i) => {
+    const x = pad + i*xStep;
+    const yReq = h - pad - (m.requests/maxVal)*(h-pad*2);
+    const yComp = h - pad - (m.completed/maxVal)*(h-pad*2);
+    requestsPath += (i===0?'':' L') + x + ',' + yReq;
+    completedPath += (i===0?'':' L') + x + ',' + yComp;
+  });
+  
+  svg.innerHTML = `
+    <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#444" />
+    <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="#444" />
+    <path d="${requestsPath}" fill="none" stroke="#6c5ce7" stroke-width="2" />
+    <path d="${completedPath}" fill="none" stroke="#00b894" stroke-width="2" />
+    <text x="${w-80}" y="20" fill="#6c5ce7" font-size="11">● Requests</text>
+    <text x="${w-80}" y="35" fill="#00b894" font-size="11">● Completed</text>
+  `;
+}
+
+function renderBarChart() {
+  const svg = document.getElementById('bar-chart');
+  const segments = FAKE_MIXPANEL.segments.by_destination_type;
+  const w=300, h=200, pad=40;
+  const maxVal = Math.max(...segments.map(s=>s.requests));
+  const barW = (w-pad*2)/segments.length - 8;
+  
+  let bars = '';
+  segments.forEach((s,i) => {
+    const x = pad + i*(barW+8);
+    const barH = (s.requests/maxVal)*(h-pad*2);
+    const y = h - pad - barH;
+    const colors = ['#e17055','#00b894','#0984e3','#fdcb6e','#d63031','#6c5ce7'];
+    bars += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="${colors[i]}" rx="3" />`;
+    bars += `<text x="${x+barW/2}" y="${h-pad+15}" fill="#888" font-size="9" text-anchor="middle">${s.type.slice(0,4)}</text>`;
+  });
+  
+  svg.innerHTML = `
+    <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#444" />
+    ${bars}
+  `;
+}
+
+function copyAnalyticsJSON() {
+  const json = JSON.stringify(FAKE_MIXPANEL, null, 2);
+  navigator.clipboard.writeText(json).then(() => {
+    alert('Analytics JSON copied to clipboard!');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = json;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('Analytics JSON copied to clipboard!');
+  });
+}
+</script></body>
+</html>
